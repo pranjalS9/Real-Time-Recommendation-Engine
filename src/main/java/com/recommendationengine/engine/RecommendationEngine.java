@@ -87,12 +87,20 @@ public class RecommendationEngine {
         List<Item> candidates = lshIndex.getCandidates(preferenceVector);
         log.debug("User {}: {} candidates retrieved from LSH", profile.userId(), candidates.size());
 
+        // If all candidates are already viewed, fall back to all items so the user
+        // always gets recommendations (can happen when the bucket is small)
+        Set<String> viewedSet = new HashSet<>(viewedIds);
+        boolean allViewed = candidates.stream().allMatch(c -> viewedSet.contains(c.getId()));
+        if (allViewed) {
+            log.debug("User {}: all LSH candidates already viewed — falling back to full scan", profile.userId());
+            candidates = new ArrayList<>(ingestionService.getAllItems());
+        }
+
         // Step 4 — score and filter
-        Set<String> viewed = new HashSet<>(viewedIds);
         List<RecommendationResult> results = new ArrayList<>();
 
         for (Item candidate : candidates) {
-            if (viewed.contains(candidate.getId())) continue;
+            if (viewedSet.contains(candidate.getId())) continue;
             if (candidate.getVector() == null) continue;
 
             double score = cosineSimilarity.compute(preferenceVector, candidate.getVector());

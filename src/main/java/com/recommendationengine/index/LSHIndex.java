@@ -60,10 +60,10 @@ public class LSHIndex {
             buckets.computeIfAbsent(hash, k -> new ArrayList<>()).add(item);
         }
 
-        log.info("LSH index built: {} items in {} buckets (avg size: {:.1f})",
+        log.info("LSH index built: {} items in {} buckets (avg size: {})",
                 items.size(),
                 buckets.size(),
-                (double) items.size() / buckets.size());
+                String.format("%.1f", (double) items.size() / buckets.size()));
     }
 
     /**
