@@ -125,4 +125,9 @@ public class LSHIndex {
     public int getTotalItemCount() {
         return allItems.size();
     }
+
+    /** Overrides the configured hash bit count — must be called before {@link #build}. */
+    public void setNumHashBits(int numHashBits) {
+        this.numHashBits = numHashBits;
+    }
 }
