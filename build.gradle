@@ -37,4 +37,10 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    // Required for Mockito + byte-buddy on Java 22+ (byte-buddy bundled in Spring Boot
+    // 3.2.x officially supports up to Java 22; experimental flag enables Java 23-25)
+    jvmArgs '-Dnet.bytebuddy.experimental=true',
+            '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.lang.reflect=ALL-UNNAMED',
+            '--add-opens', 'java.base/java.util=ALL-UNNAMED'
 }
